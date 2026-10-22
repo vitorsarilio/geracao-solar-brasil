@@ -1,0 +1,20 @@
+version: 2
+
+sources:
+  - name: aneel
+    description: >
+      Dados abertos da ANEEL, "Relação de Empreendimentos de Geração Distribuída".
+      Baixados pela ingestão (python -m ingestao) para data/raw, sem as colunas pessoais.
+      Licença ODbL.
+    config:
+      external_location: "{{ env_var('RAW_DIR', '../data/raw') }}/{name}.parquet"
+      freshness:
+        # A ANEEL atualiza o conjunto mensalmente
+        warn_after: { count: 45, period: day }
+        error_after: { count: 75, period: day }
+      loaded_at_field: "cast(DatGeracaoConjuntoDados as timestamp)"
+    tables:
+      - name: aneel_empreendimentos_gd
+        description: Um registro por empreendimento de micro ou minigeração distribuída (todas as fontes).
+      - name: aneel_gd_fotovoltaica_tecnico
+        description: Informações técnicas dos empreendimentos fotovoltaicos, incluindo a data de conexão.

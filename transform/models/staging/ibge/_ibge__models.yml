@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: stg_ibge__populacao_municipios
+    description: Estimativa da população residente por município, do ano mais recente publicado.
+    data_tests:
+      # O Brasil tem 5.570 municípios + Brasília; um número bem diferente indica mudança na API
+      - quantidade_linhas_entre:
+          arguments:
+            minimo: 5550
+            maximo: 5600
+    columns:
+      - name: cod_municipio_ibge
+        data_tests: [unique, not_null]
+      - name: nome_municipio
+        data_tests: [not_null]
+      - name: sigla_uf
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [AC, AL, AM, AP, BA, CE, DF, ES, GO, MA, MG, MS, MT, PA, PB, PE, PI, PR, RJ, RN, RO, RR, RS, SC, SE, SP, TO]
+      - name: ano_referencia
+        data_tests: [not_null]
+      - name: populacao
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1

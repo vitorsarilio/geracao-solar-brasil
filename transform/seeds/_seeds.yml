@@ -1,0 +1,20 @@
+version: 2
+
+seeds:
+  - name: classes_consumo
+    description: >
+      Rótulos legíveis e agrupamento das classes de consumo da ANEEL.
+      A fonte não descreve a classe `REBR` (vem só como "REBR"). Ela foi agrupada em
+      Residencial porque 99% dos registros estão no subgrupo tarifário B1 (residencial),
+      são de pessoa física e têm potência média igual à da classe Residencial (~7 kW).
+    columns:
+      - name: cod_classe_consumo
+        data_tests: [unique, not_null]
+      - name: classe_consumo
+        data_tests: [not_null]
+      - name: grupo_classe_consumo
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["Residencial", "Comercial", "Rural", "Industrial", "Poder público e serviços", "Outros"]

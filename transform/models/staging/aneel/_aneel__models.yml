@@ -1,0 +1,118 @@
+version: 2
+
+models:
+  - name: stg_aneel__empreendimentos_gd
+    description: >
+      Empreendimentos de micro e minigeração distribuída (todas as fontes), tipados e com
+      nomes padronizados. Inclui as outras fontes além da solar; o filtro fica no intermediate.
+    columns:
+      - name: cod_empreendimento
+        description: Código do empreendimento na ANEEL (ex. GD.SP.000.123.456).
+        data_tests: [unique, not_null]
+      - name: sigla_uf
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [AC, AL, AM, AP, BA, CE, DF, ES, GO, MA, MG, MS, MT, PA, PB, PE, PI, PR, RJ, RN, RO, RR, RS, SC, SE, SP, TO]
+      - name: nome_regiao
+        description: Grande região (o dicionário fala em mesorregião, mas a fonte traz as 5 regiões).
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [Norte, Nordeste, Centro-Oeste, Sudeste, Sul]
+      - name: cod_municipio_ibge
+        description: Código IBGE do município (7 dígitos).
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_ibge__populacao_municipios')
+                field: cod_municipio_ibge
+      - name: cod_classe_consumo
+        description: Classe de consumo (código da ANEEL, sem espaços sobrando).
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('classes_consumo')
+                field: cod_classe_consumo
+      - name: tipo_consumidor
+        description: PF (pessoa física) ou PJ (pessoa jurídica). Pode faltar em registros antigos.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [PF, PJ]
+          - proporcao_nulos_maxima:
+              arguments:
+                maximo: 0.01
+      - name: porte
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [Microgeracao, Minigeracao]
+      - name: sigla_tipo_geracao
+        description: Tipo de usina (UFV = solar fotovoltaica). Nulo em ~150 registros.
+        data_tests:
+          - proporcao_nulos_maxima:
+              arguments:
+                maximo: 0.001
+      - name: potencia_instalada_kw
+        description: Potência instalada em kW. Minigeração vai até 5.000 kW.
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 5000
+      - name: qtd_uc_recebe_credito
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+      - name: data_atualizacao_cadastral
+        description: >
+          Data da última atualização cadastral. Hoje é idêntica à data de conexão do arquivo
+          técnico. Nula quando a fonte traz a data de preenchimento 1900-01-01.
+        data_tests:
+          - proporcao_nulos_maxima:
+              arguments:
+                maximo: 0.001
+      - name: data_publicacao_dados
+        data_tests: [not_null]
+
+  - name: stg_aneel__gd_fotovoltaica_tecnico
+    description: >
+      Informações técnicas dos empreendimentos fotovoltaicos. É a fonte da data de conexão,
+      que não existe na relação principal.
+    columns:
+      - name: cod_empreendimento
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_aneel__empreendimentos_gd')
+                field: cod_empreendimento
+      - name: data_conexao
+        description: >
+          Data de conexão do sistema à rede. Nula quando a fonte traz 1900-01-01
+          (56 registros em outubro de 2026).
+        data_tests:
+          - proporcao_nulos_maxima:
+              arguments:
+                maximo: 0.001
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: "date '2000-01-01'"
+                max_value: "current_date"
+      - name: potencia_instalada_kw
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 5000

@@ -1,0 +1,28 @@
+name: geracao_solar
+version: "1.0.0"
+config-version: 2
+profile: geracao_solar
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  geracao_solar:
+    staging:
+      # Views sobre os Parquet de data/raw: tipagem, nomes e limpeza, 1 modelo por tabela da fonte
+      +materialized: view
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: table
+
+seeds:
+  geracao_solar:
+    +column_types:
+      cod_classe_consumo: varchar
+      classe_consumo: varchar
+      grupo_classe_consumo: varchar

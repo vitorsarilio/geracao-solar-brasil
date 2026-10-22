@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: ibge
+    description: Estimativa da população residente por município (IBGE SIDRA, tabela 6579).
+    config:
+      external_location: "{{ env_var('RAW_DIR', '../data/raw') }}/{name}.parquet"
+    tables:
+      - name: ibge_populacao_municipios

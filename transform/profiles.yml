@@ -1,0 +1,9 @@
+# Rode o dbt de dentro da pasta transform/ (o dbt acha este arquivo sozinho).
+# Sem segredos: o banco é um arquivo DuckDB local, fora do git.
+geracao_solar:
+  target: local
+  outputs:
+    local:
+      type: duckdb
+      path: "{{ env_var('DUCKDB_PATH', '../data/geracao_solar.duckdb') }}"
+      threads: 4
