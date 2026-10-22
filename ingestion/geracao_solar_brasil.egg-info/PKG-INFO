@@ -1,7 +1,0 @@
-Metadata-Version: 2.4
-Name: geracao-solar-brasil
-Version: 0.1.0
-Summary: Ingestão dos dados abertos de geração distribuída solar (ANEEL) e população (IBGE)
-Requires-Python: >=3.12
-License-File: LICENSE
-Dynamic: license-file
