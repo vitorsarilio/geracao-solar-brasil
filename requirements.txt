@@ -4,3 +4,6 @@ dbt-duckdb==1.11.0
 duckdb==2.0.0
 requests==2.34.2
 pytest==9.1.1
+
+# O próprio pacote de ingestão (permite `python -m ingestao` de qualquer pasta)
+-e .

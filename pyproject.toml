@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "geracao-solar-brasil"
+version = "0.1.0"
+description = "Ingestão dos dados abertos de geração distribuída solar (ANEEL) e população (IBGE)"
+requires-python = ">=3.12"
+# As dependências ficam fixadas em requirements.txt
+
+[tool.setuptools.packages.find]
+where = ["ingestion"]
+include = ["ingestao*"]
+
+[tool.pytest.ini_options]
+testpaths = ["ingestion/tests"]
+pythonpath = ["ingestion"]
