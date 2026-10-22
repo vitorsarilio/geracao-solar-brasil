@@ -6,9 +6,8 @@ __pycache__/
 *.egg-info/
 
 # Dados brutos: baixados de novo a cada execução, nunca versionados
+# (ZIPs e CSVs temporários da ingestão também ficam dentro de data/raw)
 data/raw/
-*.zip
-*.csv
 
 # Banco DuckDB local (os marts versionados ficam em data/marts/*.parquet)
 *.duckdb
@@ -18,6 +17,7 @@ data/raw/
 transform/target/
 transform/dbt_packages/
 transform/logs/
+transform/.user.yml
 logs/
 
 # Evidence

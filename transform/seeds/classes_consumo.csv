@@ -1,0 +1,10 @@
+cod_classe_consumo,classe_consumo,grupo_classe_consumo
+RE,Residencial,Residencial
+REBR,Residencial (REBR),Residencial
+CO,Comercial,Comercial
+RU,Rural,Rural
+IN,Industrial,Industrial
+PP,Poder Público,Poder público e serviços
+SP,Serviço Público,Poder público e serviços
+IP,Iluminação Pública,Poder público e serviços
+CPR,Consumo Próprio,Outros
