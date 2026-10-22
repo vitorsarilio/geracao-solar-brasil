@@ -54,6 +54,13 @@ jobs:
         # Informativo: com os mesmos dados da ANEEL, os Parquet saem idênticos
         run: git diff --stat --exit-code data/marts || echo "::notice::Marts diferentes dos versionados (dados novos da ANEEL ou mudança nos modelos)."
 
+      - name: Publica os marts gerados como artefato (para revisar o PR)
+        uses: actions/upload-artifact@v7
+        with:
+          name: marts
+          path: data/marts/*.parquet
+          retention-days: 7
+
   site:
     name: Build do site
     runs-on: ubuntu-latest
