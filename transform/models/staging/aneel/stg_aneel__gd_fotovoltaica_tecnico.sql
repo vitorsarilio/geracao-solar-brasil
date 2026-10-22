@@ -8,7 +8,7 @@ select
     {{ texto('CodGeracaoDistribuida') }}                  as cod_empreendimento,
     {{ data_valida('DatConexao') }}                       as data_conexao,
 
-    {{ numero_br('MdaPotenciaInstalada') }}               as potencia_instalada_kw,
+    {{ numero_br('MdaPotenciaInstalada', 'decimal(12,2)') }}             as potencia_instalada_kw,
     {{ numero_br('MdaPotenciaModulos') }}                 as potencia_modulos_kw,
     {{ numero_br('MdaPotenciaInversores') }}              as potencia_inversores_kw,
     {{ numero_br('MdaAreaArranjo') }}                     as area_arranjo_m2,

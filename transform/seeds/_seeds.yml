@@ -1,6 +1,25 @@
 version: 2
 
 seeds:
+  - name: ufs
+    description: Nome por extenso e grande região de cada UF.
+    data_tests:
+      - quantidade_linhas_entre:
+          arguments:
+            minimo: 27
+            maximo: 27
+    columns:
+      - name: sigla_uf
+        data_tests: [unique, not_null]
+      - name: nome_uf
+        data_tests: [unique, not_null]
+      - name: nome_regiao
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [Norte, Nordeste, Centro-Oeste, Sudeste, Sul]
+
   - name: classes_consumo
     description: >
       Rótulos legíveis e agrupamento das classes de consumo da ANEEL.

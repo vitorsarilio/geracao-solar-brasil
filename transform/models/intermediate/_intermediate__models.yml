@@ -1,0 +1,47 @@
+version: 2
+
+models:
+  - name: int_gd_solar__empreendimentos
+    description: >
+      Sistemas solares fotovoltaicos (UFV) de geração distribuída, um por linha, com data de
+      conexão, UF e região, município, classe de consumo rotulada e potência.
+    data_tests:
+      # O total da relação principal e o do arquivo técnico precisam bater
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_aneel__gd_fotovoltaica_tecnico')
+    columns:
+      - name: cod_empreendimento
+        data_tests: [unique, not_null]
+      - name: data_conexao
+        data_tests:
+          - proporcao_nulos_maxima:
+              arguments:
+                maximo: 0.001
+      - name: sigla_uf
+        data_tests: [not_null]
+      - name: nome_uf
+        data_tests: [not_null]
+      - name: nome_regiao
+        data_tests: [not_null]
+      - name: cod_municipio_ibge
+        data_tests: [not_null]
+      - name: classe_consumo
+        data_tests: [not_null]
+      - name: grupo_classe_consumo
+        data_tests: [not_null]
+      - name: potencia_instalada_kw
+        data_tests: [not_null]
+
+  - name: int_gd_solar__periodo_referencia
+    description: Mês de referência (último mês completo) e janelas de 12 meses usadas pelos marts.
+    data_tests:
+      - quantidade_linhas_entre:
+          arguments:
+            minimo: 1
+            maximo: 1
+    columns:
+      - name: mes_referencia
+        data_tests: [not_null]
+      - name: data_publicacao_dados
+        data_tests: [not_null]

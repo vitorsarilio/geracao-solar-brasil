@@ -6,4 +6,6 @@ geracao_solar:
     local:
       type: duckdb
       path: "{{ env_var('DUCKDB_PATH', '../data/geracao_solar.duckdb') }}"
+      # Modelos com materialized='external' (os marts) viram Parquet nesta pasta
+      external_root: "{{ env_var('MARTS_DIR', '../data/marts') }}"
       threads: 4

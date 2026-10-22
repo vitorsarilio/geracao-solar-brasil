@@ -1,0 +1,135 @@
+version: 2
+
+# Todos os marts viram data/marts/<nome>.parquet. Potência sempre em kW.
+# "Watts por habitante" = kW por 1.000 habitantes.
+
+models:
+  - name: mart_gd_solar_resumo
+    description: Uma linha com os números de destaque e as datas de referência (cabeçalho do dashboard).
+    data_tests:
+      - quantidade_linhas_entre:
+          arguments: { minimo: 1, maximo: 1 }
+    columns:
+      - name: mes_referencia
+        description: Último mês considerado completo (ver int_gd_solar__periodo_referencia).
+        data_tests: [not_null]
+      - name: qtd_meses_provisorios
+        description: Meses depois do de referência, ainda incompletos por atraso de cadastro.
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0, max_value: 4 }
+              config:
+                # Mais de 4 meses provisórios: a fonte está atrasando mais que o normal
+                severity: warn
+      - name: qtd_sistemas
+        data_tests: [not_null]
+      - name: potencia_kw
+        data_tests: [not_null]
+
+  - name: fct_gd_solar_mensal
+    description: >
+      Pergunta 1. Conexões e potência por mês × UF × grupo de classe de consumo, com a grade
+      completa de meses (zeros incluídos) e os acumulados. Meses depois do de referência vêm
+      com mes_provisorio = true.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [mes, sigla_uf, grupo_classe_consumo]
+    columns:
+      - name: mes
+        data_tests: [not_null]
+      - name: mes_provisorio
+        data_tests: [not_null]
+      - name: sigla_uf
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: { to: ref('ufs'), field: sigla_uf }
+      - name: grupo_classe_consumo
+        data_tests: [not_null]
+      - name: qtd_conexoes
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0 }
+      - name: potencia_adicionada_kw
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0 }
+
+  - name: mart_gd_solar_uf
+    description: Pergunta 2 (estados). Potência, sistemas, população e indicadores per capita por UF.
+    data_tests:
+      - quantidade_linhas_entre:
+          arguments: { minimo: 27, maximo: 27 }
+    columns:
+      - name: sigla_uf
+        data_tests: [unique, not_null]
+      - name: populacao
+        data_tests: [not_null]
+      - name: watts_por_habitante
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0 }
+      - name: participacao_potencia
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0, max_value: 1 }
+
+  - name: mart_gd_solar_municipio
+    description: >
+      Pergunta 2 (municípios). Todos os municípios do IBGE, inclusive os sem GD solar (com zero).
+    data_tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_ibge__populacao_municipios')
+    columns:
+      - name: cod_municipio_ibge
+        data_tests: [unique, not_null]
+      - name: sigla_uf
+        data_tests: [not_null]
+      - name: nome_uf
+        data_tests: [not_null]
+      - name: qtd_sistemas
+        data_tests: [not_null]
+      - name: watts_por_habitante
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0 }
+
+  - name: mart_gd_solar_classe_anual
+    description: Pergunta 3. Conexões e potência por ano de conexão × classe de consumo.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [ano, classe_consumo]
+    columns:
+      - name: grupo_classe_consumo
+        data_tests: [not_null]
+      - name: participacao_potencia_no_ano
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0, max_value: 1 }
+      - name: ano_completo
+        data_tests: [not_null]
+
+  - name: mart_gd_solar_aceleracao
+    description: >
+      Pergunta 4. Potência conectada nos 12 meses até o mês de referência contra os 12
+      anteriores, para Brasil, UFs e municípios, com a classificação da tendência.
+    columns:
+      - name: chave
+        description: Código do município, sigla da UF ou "BR".
+        data_tests: [unique, not_null]
+      - name: nivel
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: { values: [Brasil, UF, Município] }
+      - name: classificacao
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [Acelerando, Estável, Desacelerando, Amostra pequena, Dados incompletos]

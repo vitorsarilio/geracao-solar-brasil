@@ -10,6 +10,19 @@ macro-paths: ["macros"]
 target-path: "target"
 clean-targets: ["target", "dbt_packages"]
 
+vars:
+  # Mês de referência: último mês com pelo menos esta fração das conexões médias dos 12
+  # meses anteriores. Os meses seguintes ainda estão incompletos por atraso de cadastro
+  # das distribuidoras e ficam marcados como provisórios.
+  fracao_minima_mes_completo: 0.8
+  # Pergunta 4: potência dos últimos 12 meses ÷ potência dos 12 anteriores
+  limite_acelerando: 1.2
+  limite_desacelerando: 0.8
+  # Municípios com menos conexões que isto em alguma das janelas: "Amostra pequena"
+  minimo_conexoes_por_janela: 50
+  # UF com pelo menos estes meses sem nenhuma conexão na janela recente: "Dados incompletos"
+  meses_sem_conexao_para_lacuna: 3
+
 models:
   geracao_solar:
     staging:
@@ -18,11 +31,19 @@ models:
     intermediate:
       +materialized: view
     marts:
-      +materialized: table
+      # Cada mart vira data/marts/<nome>.parquet (versionado e lido pelo Evidence)
+      +materialized: external
+      +format: parquet
 
 seeds:
   geracao_solar:
-    +column_types:
-      cod_classe_consumo: varchar
-      classe_consumo: varchar
-      grupo_classe_consumo: varchar
+    classes_consumo:
+      +column_types:
+        cod_classe_consumo: varchar
+        classe_consumo: varchar
+        grupo_classe_consumo: varchar
+    ufs:
+      +column_types:
+        sigla_uf: varchar
+        nome_uf: varchar
+        nome_regiao: varchar

@@ -33,7 +33,7 @@ select
     {{ texto('SigTipoGeracao') }}                         as sigla_tipo_geracao,
     {{ texto('DscFonteGeracao') }}                        as fonte_geracao,
     {{ texto('DscPorte') }}                               as porte,
-    {{ numero_br('MdaPotenciaInstaladaKW') }}             as potencia_instalada_kw,
+    {{ numero_br('MdaPotenciaInstaladaKW', 'decimal(12,2)') }}           as potencia_instalada_kw,
 
     -- datas
     {{ data_valida('DthAtualizaCadastralEmpreend') }}     as data_atualizacao_cadastral,
