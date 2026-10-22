@@ -27,7 +27,7 @@ jobs:
     name: Ingestão e dbt
     if: github.event_name != 'push'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     permissions:
       contents: write # para commitar os marts
     steps:
@@ -42,7 +42,16 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Ingestão (ANEEL e IBGE)
-        run: python -m ingestao
+        # Se o portal da ANEEL estiver instável, tenta de novo após 2 minutos (até 3 vezes)
+        run: |
+          for tentativa in 1 2 3; do
+            python -m ingestao && exit 0
+            if [ "$tentativa" -lt 3 ]; then
+              echo "::warning::Ingestão falhou (tentativa $tentativa de 3); nova tentativa em 2 minutos."
+              sleep 120
+            fi
+          done
+          exit 1
 
       - name: Instala pacotes do dbt
         working-directory: transform

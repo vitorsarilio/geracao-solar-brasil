@@ -1,10 +1,9 @@
 name: CI
 
-# Em PRs e em branches que não são a main: testa tudo, sem commitar nem publicar.
+# Em PRs (e manualmente): testa tudo, sem commitar nem publicar.
+# Só em pull_request, para não rodar duas vezes por commit (push + PR).
 on:
   pull_request:
-  push:
-    branches-ignore: [main]
   workflow_dispatch:
 
 permissions:
@@ -18,7 +17,7 @@ jobs:
   pipeline:
     name: Testes, ingestão e dbt
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
 
@@ -34,7 +33,16 @@ jobs:
         run: pytest -q
 
       - name: Ingestão (ANEEL e IBGE)
-        run: python -m ingestao
+        # Se o portal da ANEEL estiver instável, tenta de novo após 2 minutos (até 3 vezes)
+        run: |
+          for tentativa in 1 2 3; do
+            python -m ingestao && exit 0
+            if [ "$tentativa" -lt 3 ]; then
+              echo "::warning::Ingestão falhou (tentativa $tentativa de 3); nova tentativa em 2 minutos."
+              sleep 120
+            fi
+          done
+          exit 1
 
       - name: dbt build (modelos e testes)
         working-directory: transform
