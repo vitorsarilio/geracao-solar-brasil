@@ -17,11 +17,15 @@ TAMANHO_BLOCO = 1 << 20  # 1 MiB
 
 def criar_sessao() -> requests.Session:
     sessao = requests.Session()
+    # O portal da ANEEL às vezes derruba conexões (ex.: SSL "UNEXPECTED_EOF" visto no
+    # GitHub Actions). Esperas crescentes até 2 min, ~6,5 min no total, antes de desistir.
     retentativas = Retry(
-        total=5,
-        backoff_factor=2,  # 2, 4, 8, 16, 32 s
+        total=7,
+        backoff_factor=5,  # 0, 10, 20, 40, 80, 120, 120 s
+        backoff_max=120,
         status_forcelist=(429, 500, 502, 503, 504),
         allowed_methods=("GET",),
+        respect_retry_after_header=True,
     )
     sessao.mount("https://", HTTPAdapter(max_retries=retentativas))
     sessao.headers["User-Agent"] = USER_AGENT
