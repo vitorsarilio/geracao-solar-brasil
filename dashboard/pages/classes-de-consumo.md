@@ -74,6 +74,7 @@ A classe **<Value data={lider} column=grupo_classe_consumo />** responde por <Va
     y=potencia_mw
     series=grupo_classe_consumo
     type=stacked100
+    sort=false
     title="Participação de cada classe na potência conectada no ano"
     subtitle="O último ano ainda está incompleto"
 />

@@ -7,7 +7,10 @@ sidebar_position: 1
 select
     *,
     potencia_kw / 1e3 as potencia_mw,
-    potencia_kw / 1e6 as potencia_gw
+    potencia_kw / 1e6 as potencia_gw,
+    -- nomes curtos usados como título da legenda dos mapas
+    potencia_kw / 1e3   as "Megawatts",
+    watts_por_habitante as "W por habitante"
 from gd.uf
 order by potencia_kw desc
 ```
@@ -36,7 +39,7 @@ select sum(participacao_potencia) as participacao from (select * from ${ufs} ord
     areaCol=cod_uf_ibge
     geoJsonUrl="/geracao-solar-brasil/br-ufs.geojson"
     geoId=codarea
-    value=potencia_mw
+    value="Megawatts"
     valueFmt='#,##0" MW"'
     tooltip={[
         {id: 'nome_uf', showColumnName: false, valueClass: 'font-bold'},
@@ -56,7 +59,7 @@ select sum(participacao_potencia) as participacao from (select * from ${ufs} ord
     areaCol=cod_uf_ibge
     geoJsonUrl="/geracao-solar-brasil/br-ufs.geojson"
     geoId=codarea
-    value=watts_por_habitante
+    value="W por habitante"
     valueFmt='#,##0" W/hab."'
     tooltip={[
         {id: 'nome_uf', showColumnName: false, valueClass: 'font-bold'},
