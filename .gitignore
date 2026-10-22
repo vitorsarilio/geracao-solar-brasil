@@ -1,0 +1,33 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Dados brutos: baixados de novo a cada execução, nunca versionados
+data/raw/
+*.zip
+*.csv
+
+# Banco DuckDB local (os marts versionados ficam em data/marts/*.parquet)
+*.duckdb
+*.duckdb.wal
+
+# dbt
+transform/target/
+transform/dbt_packages/
+transform/logs/
+logs/
+
+# Evidence
+dashboard/node_modules/
+dashboard/.evidence/
+dashboard/build/
+dashboard/static/data/
+
+# Editor / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.env
