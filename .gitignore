@@ -32,3 +32,5 @@ dashboard/static/data/
 .DS_Store
 Thumbs.db
 .env
+dashboard/.svelte-kit/
+dashboard/**/*.options.yaml

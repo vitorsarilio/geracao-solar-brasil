@@ -11,6 +11,9 @@ seeds:
     columns:
       - name: sigla_uf
         data_tests: [unique, not_null]
+      - name: cod_uf_ibge
+        description: Código IBGE da UF (2 dígitos), igual ao `codarea` da malha de UFs do IBGE usada no mapa.
+        data_tests: [unique, not_null]
       - name: nome_uf
         data_tests: [unique, not_null]
       - name: nome_regiao

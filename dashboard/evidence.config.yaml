@@ -1,0 +1,47 @@
+# Evidence (framework estático "legacy", versão fixada em package.json).
+
+# O site é publicado em https://vitorsarilio.github.io/geracao-solar-brasil/
+deployment:
+  basePath: /geracao-solar-brasil
+
+appearance:
+  default: light
+  switcher: true
+
+theme:
+  colorPalettes:
+    default:
+      light: ["#e8890c", "#1f6f8b", "#f2c14e", "#5b8e7d", "#a23b72", "#8d99ae", "#3d5a80", "#c97b63"]
+      dark:  ["#f4a43a", "#4fa3c0", "#f6d27a", "#7fb3a1", "#c96aa0", "#a9b4c6", "#7d9cc4", "#e0a38f"]
+  colorScales:
+    default:
+      light: ["#fdebd0", "#e8890c"]
+      dark:  ["#5a3a10", "#f4a43a"]
+  colors:
+    primary:
+      light: "#c46f05"
+      dark: "#f4a43a"
+    accent:
+      light: "#1f6f8b"
+      dark: "#4fa3c0"
+    base:
+      light: "#ffffff"
+      dark: "#0b0f14"
+    info:
+      light: "#1f6f8b"
+      dark: "#4fa3c0"
+    positive:
+      light: "#2f855a"
+      dark: "#68d391"
+    warning:
+      light: "#b7791f"
+      dark: "#f6ad55"
+    negative:
+      light: "#c53030"
+      dark: "#fc8181"
+
+plugins:
+  components:
+    "@evidence-dev/core-components": {}
+  datasources:
+    "@evidence-dev/duckdb": {}

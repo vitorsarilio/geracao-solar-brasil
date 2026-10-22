@@ -19,6 +19,7 @@ populacao as (
 base as (
     select
         u.sigla_uf,
+        u.cod_uf_ibge,
         u.nome_uf,
         u.nome_regiao,
         coalesce(s.qtd_sistemas, 0) as qtd_sistemas,
@@ -32,6 +33,7 @@ base as (
 
 select
     sigla_uf,
+    cod_uf_ibge,
     nome_uf,
     nome_regiao,
     qtd_sistemas,

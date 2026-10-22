@@ -45,5 +45,6 @@ seeds:
     ufs:
       +column_types:
         sigla_uf: varchar
+        cod_uf_ibge: varchar
         nome_uf: varchar
         nome_regiao: varchar
